@@ -1,0 +1,78 @@
+# ----- Part 3: Launch File -----
+# File: sensor_simulation.launch
+
+"""
+<launch>
+  <!-- Start the sensor publisher node -->
+  <node name="sensor_publisher" pkg="robot_sensors" type="sensor_publisher.py" output="screen">
+    <!-- Optional parameters can be set here -->
+    <!-- <param name="obstacle_count" value="10" /> -->
+  </node>
+  
+  <!-- Start the sensor processor node -->
+  <node name="sensor_processor" pkg="robot_sensors" type="sensor_processor.py" output="screen">
+    <!-- Optional parameters -->
+    <param name="min_safe_distance" value="1.0" />
+  </node>
+  
+  <!-- Launch RViz for visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_sensors)/rviz/sensor_visualization.rviz" />
+</launch>
+"""
+
+# ----- Part 4: Exercise Tasks for Students -----
+
+"""
+Student Tasks:
+
+1. Environment Setup:
+   - Create a new ROS package named 'robot_sensors'
+   - Create the Python scripts as shown above
+   - Make the scripts executable
+   - Create the launch file
+   - Create an RViz configuration for visualization
+
+2. Implementation Tasks:
+   a. Complete the find_open_direction() method to improve the algorithm
+   b. Implement a better obstacle avoidance algorithm
+   c. Add a service to the sensor_publisher to add/remove obstacles dynamically
+   d. Create a custom message type for processed sensor data
+   e. Implement a simple mapping system using the lidar data
+
+3. Analysis Tasks:
+   a. Evaluate the performance of the obstacle avoidance algorithm
+   b. Analyze the effect of noise on sensor readings
+   c. Compare different smoothing techniques for the lidar data
+   d. Measure the computational load of the processing algorithm
+
+4. Extensions:
+   a. Add visualization markers for the obstacles in RViz
+   b. Implement a simple path planning algorithm
+   c. Add simulated odometry data
+   d. Create a web interface to monitor and control the robot
+   e. Implement a simple SLAM algorithm
+
+5. Report:
+   - Document your implementation and improvements
+   - Analyze the performance of your algorithms
+   - Discuss challenges and solutions
+   - Propose further enhancements
+"""
+
+# ----- Part 5: RViz Visualization Setup -----
+# This would be saved as sensor_visualization.rviz
+
+"""
+RViz Configuration:
+
+1. Add a Grid display for reference
+2. Add a LaserScan display:
+   - Set topic to /simulated_lidar_scan
+   - Configure visualization parameters
+3. Add a Marker display for obstacles
+4. Add an Odometry display for robot position
+5. Add custom displays for processed data
+
+For LaserScan visualization, you'll need to convert the Float32MultiArray 
+to a LaserScan message using an additional node.
+"""
