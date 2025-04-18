@@ -8,9 +8,9 @@
 ## Prerequisites
 ### Docker installed on your system
 
-Install Docker for Windows
-Install Docker for macOS
-Install Docker for Linux
+##### Install Docker for Windows
+##### Install Docker for macOS
+##### Install Docker for Linux
 
 Basic familiarity with terminal/command prompt
 
