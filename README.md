@@ -2,8 +2,8 @@
 ## Advanced Robotics with ROS - Module 1
 
 
-## Getting Started with ROS Using Docker - Step-by-Step Guide
-## Here's a practical guide to setting up ROS with Docker on your own laptop, following the activities we discussed for Module 1 of the Advanced Robotics with ROS course.
+### Getting Started with ROS Using Docker - Step-by-Step Guide
+Here's a practical guide to setting up ROS with Docker on your own laptop, following the activities we discussed for Module 1 of the Advanced Robotics with ROS course.
 
 ## Prerequisites
 ### Docker installed on your system
@@ -219,7 +219,7 @@ if __name__ == '__main__':
 ### Step 8: Create a Launch File
 Create this file in your workspace:
 #### File: ~/ros_ws/src/ros_intro_demo/launch/sensors.launch
-```python
+```xml
 <launch>
   <!-- Start the sensor publisher node -->
   <node name="sensor_publisher" pkg="ros_intro_demo" type="sensor_publisher.py" output="screen">
