@@ -14,7 +14,7 @@
 ### Install Docker for Linux
 
 
-### Basic familiarity with terminal/command prompt
+ Basic familiarity with terminal/command prompt
 
 ## Step 1: Pull the ROS Docker Image
 ## Open a terminal and run:
