@@ -1,4 +1,4 @@
-# ROS Introduction in Google Colab
+# ROS Introduction in Docker
 ## Advanced Robotics with ROS - Module 1
 
 
