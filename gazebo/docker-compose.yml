@@ -1,0 +1,10 @@
+version: '3'
+services:
+  ros-vnc:
+    build: .
+    ports:
+      - "5901:5901"
+    volumes:
+      - ./ros_ws:/ros_ws
+    environment:
+      - DISPLAY=:1
