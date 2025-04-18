@@ -120,7 +120,7 @@ class SensorPublisher:
             self.distance_pub.publish(Float32(self.distance))
             
             # Log values occasionally
-            rospy.loginfo(f"Published: Temperature={self.temperature:.2f}°C, Distance={self.distance:.2f}m")
+            rospy.loginfo(f"Published: Temperature={self.temperature:.2f}C, Distance={self.distance:.2f}m")
             
             # Sleep to maintain the publishing rate
             self.rate.sleep()
@@ -163,12 +163,12 @@ class SensorProcessor:
     def temperature_callback(self, msg):
         # Store the temperature data
         self.temperature = msg.data
-        rospy.loginfo(f"Received temperature: {self.temperature:.2f}°C")
+        rospy.loginfo("Received temperature: %.2f C" % self.temperature)
     
     def distance_callback(self, msg):
         # Store the distance data
         self.distance = msg.data
-        rospy.loginfo(f"Received distance: {self.distance:.2f}m")
+        rospy.loginfo("Received distance: %.2f m" % self.distance)
     
     def process_data(self):
         # Check if we have received data
@@ -196,7 +196,7 @@ class SensorProcessor:
         
         # Publish status
         self.status_pub.publish(String(status))
-        rospy.loginfo(f"Published status: {status}")
+        rospy.loginfo("Published status: %s" % status)
     
     def run(self):
         rospy.loginfo("Starting to process sensor data...")
@@ -334,4 +334,168 @@ docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noeti
 4. Use ROS Tools:
 ```bash
 docker run --rm --network container:ros_master ros:noetic-ros-base-focal ROS_COMMAND
+```
+
+
+Creating a completely new file in the Docker container with clean content:
+```bash
+docker run -it --rm -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash
+```
+
+
+```bash
+# Remove the problematic file
+rm /ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
+
+# Create a fresh one with simple, clean content
+cat > /ros_ws/src/ros_intro_demo/scripts/sensor_processor.py << 'EOF'
+#!/usr/bin/env python3
+
+import rospy
+from std_msgs.msg import Float32, String
+
+class SensorProcessor:
+    def __init__(self):
+        # Initialize the ROS node
+        rospy.init_node('sensor_processor', anonymous=True)
+        
+        # Subscribe to sensor topics
+        self.temp_sub = rospy.Subscriber('temperature', Float32, self.temperature_callback)
+        self.dist_sub = rospy.Subscriber('distance', Float32, self.distance_callback)
+        
+        # Publisher for status messages
+        self.status_pub = rospy.Publisher('robot_status', String, queue_size=10)
+        
+        # Store the latest sensor readings
+        self.temperature = None
+        self.distance = None
+        
+        # Set the processing rate (1 Hz)
+        self.rate = rospy.Rate(1)
+        
+        rospy.loginfo("Sensor processor initialized")
+    
+    def temperature_callback(self, msg):
+        # Store the temperature data
+        self.temperature = msg.data
+        rospy.loginfo("Received temperature: %.2f C" % self.temperature)
+    
+    def distance_callback(self, msg):
+        # Store the distance data
+        self.distance = msg.data
+        rospy.loginfo("Received distance: %.2f m" % self.distance)
+    
+    def process_data(self):
+        # Check if we have received data
+        if self.temperature is None or self.distance is None:
+            return
+        
+        # Process the data and determine robot status
+        status = ""
+        
+        # Temperature-based status
+        if self.temperature > 30.0:
+            status += "WARNING: Temperature too high! "
+        elif self.temperature < 20.0:
+            status += "WARNING: Temperature too low! "
+        else:
+            status += "Temperature normal. "
+        
+        # Distance-based status
+        if self.distance < 0.7:
+            status += "ALERT: Obstacle very close! "
+        elif self.distance < 1.2:
+            status += "Caution: Obstacle nearby. "
+        else:
+            status += "Path clear. "
+        
+        # Publish status
+        self.status_pub.publish(String(status))
+        rospy.loginfo("Published status: %s" % status)
+    
+    def run(self):
+        rospy.loginfo("Starting to process sensor data...")
+        
+        while not rospy.is_shutdown():
+            # Process the data
+            self.process_data()
+            
+            # Sleep to maintain the processing rate
+            self.rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        processor = SensorProcessor()
+        processor.run()
+    except rospy.ROSInterruptException:
+        pass
+EOF
+
+# Make it executable
+chmod +x /ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
+
+# Verify it's valid Python
+python3 -m py_compile /ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
+
+# Do the same for the publisher
+cat > /ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py << 'EOF'
+#!/usr/bin/env python3
+
+import rospy
+from std_msgs.msg import Float32
+import random
+import math
+
+def publisher_node():
+    # Initialize the ROS node
+    rospy.init_node('sensor_publisher', anonymous=True)
+    
+    # Create publishers for simulated sensors
+    temperature_pub = rospy.Publisher('temperature', Float32, queue_size=10)
+    distance_pub = rospy.Publisher('distance', Float32, queue_size=10)
+    
+    # Set the publishing rate (1 Hz)
+    rate = rospy.Rate(1)
+    
+    # Initialize sensor values
+    temperature = 25.0  # starting temperature in Celsius
+    distance = 1.0  # starting distance in meters
+    
+    rospy.loginfo("Sensor publisher initialized")
+    
+    # Main loop
+    while not rospy.is_shutdown():
+        # Update sensor values
+        temperature += random.uniform(-0.5, 0.5)
+        distance = 1.0 + 0.5 * math.sin(rospy.get_time() * 0.5)
+        
+        # Publish sensor values
+        temperature_pub.publish(Float32(temperature))
+        distance_pub.publish(Float32(distance))
+        
+        # Log values
+        rospy.loginfo("Published: Temperature=%.2f C, Distance=%.2f m" % (temperature, distance))
+        
+        # Sleep to maintain the publishing rate
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        publisher_node()
+    except rospy.ROSInterruptException:
+        pass
+EOF
+
+chmod +x /ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py
+python3 -m py_compile /ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py
+```
+
+```bash
+docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_publisher.py"
+```
+
+Exit the container (type exit), then try running your nodes again:
+And in another terminal:
+```bash
+docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_processor.py"
 ```
