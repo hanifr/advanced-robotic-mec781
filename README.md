@@ -6,25 +6,23 @@
 ## Here's a practical guide to setting up ROS with Docker on your own laptop, following the activities we discussed for Module 1 of the Advanced Robotics with ROS course.
 
 ## Prerequisites
+### Docker installed on your system
 
-## Docker installed on your system
+Install Docker for Windows
+Install Docker for macOS
+Install Docker for Linux
 
-### Install Docker for Windows
-### Install Docker for macOS
-### Install Docker for Linux
+Basic familiarity with terminal/command prompt
 
-
- Basic familiarity with terminal/command prompt
-
-## Step 1: Pull the ROS Docker Image
-## Open a terminal and run:
+### Step 1: Pull the ROS Docker Image
+Open a terminal and run:
 ```bash
 docker pull ros:noetic-ros-base-focal
 ```
 
-# This will download the ROS Noetic image based on Ubuntu Focal.
-## Step 2: Create a ROS Workspace
-## Create a directory on your host machine to store your ROS files:
+This will download the ROS Noetic image based on Ubuntu Focal.
+### Step 2: Create a ROS Workspace
+Create a directory on your host machine to store your ROS files:
 ```bash
 # For Linux/macOS
 mkdir -p ~/ros_ws/src
@@ -33,8 +31,8 @@ mkdir -p ~/ros_ws/src
 mkdir -p $HOME/ros_ws/src
 ```
 
-## Step 3: Initialize Your Workspace
-## Run a Docker container to initialize the workspace:
+### Step 3: Initialize Your Workspace
+Run a Docker container to initialize the workspace:
 ```bash
 # For Linux/macOS
 docker run --rm -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_ws && mkdir -p src && catkin_init_workspace src"
@@ -43,8 +41,8 @@ docker run --rm -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_w
 docker run --rm -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_ws && mkdir -p src && catkin_init_workspace src"
 ```
 
-## Step 4: Create a ROS Package
-## Create a package for our demo:
+### Step 4: Create a ROS Package
+Create a package for our demo:
 ```bash
 # For Linux/macOS
 docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws/src ros:noetic-ros-base-focal bash -c "catkin_create_pkg ros_intro_demo std_msgs rospy"
@@ -53,8 +51,8 @@ docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws/src ros:noetic-ros-base-focal bas
 docker run --rm -v ${HOME}/ros_ws:/ros_ws -w /ros_ws/src ros:noetic-ros-base-focal bash -c "catkin_create_pkg ros_intro_demo std_msgs rospy"
 ```
 
-## Step 5: Build the Workspace
-## Now build the workspace:
+### Step 5: Build the Workspace
+Now build the workspace:
 ```bash
 # For Linux/macOS
 docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c "catkin_make"
@@ -63,7 +61,7 @@ docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c
 docker run --rm -v ${HOME}/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c "catkin_make"
 ```
 
-## Step 6: Create Directories for Scripts and Launch Files
+### Step 6: Create Directories for Scripts and Launch Files
 ```bash
 # For Linux/macOS
 mkdir -p ~/ros_ws/src/ros_intro_demo/scripts
@@ -73,9 +71,9 @@ mkdir -p ~/ros_ws/src/ros_intro_demo/launch
 mkdir -p $HOME/ros_ws/src/ros_intro_demo/scripts
 mkdir -p $HOME/ros_ws/src/ros_intro_demo/launch
 ```
-## Step 7: Create Publisher and Subscriber Nodes
-## Create these two files in your workspace:
-# File: ~/ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py
+### Step 7: Create Publisher and Subscriber Nodes
+Create these two files in your workspace:
+#### File: ~/ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py
 
 ```python
 #!/usr/bin/env python3
@@ -134,7 +132,7 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         pass
 ```
-# File: ~/ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
+#### File: ~/ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
 ```python
 #!/usr/bin/env python3
 
@@ -218,9 +216,9 @@ if __name__ == '__main__':
         pass
 ```
 
-## Step 8: Create a Launch File
-## Create this file in your workspace:
-# File: ~/ros_ws/src/ros_intro_demo/launch/sensors.launch
+### Step 8: Create a Launch File
+Create this file in your workspace:
+#### File: ~/ros_ws/src/ros_intro_demo/launch/sensors.launch
 ```python
 <launch>
   <!-- Start the sensor publisher node -->
@@ -234,7 +232,7 @@ if __name__ == '__main__':
   </node>
 </launch>
 ```
-## Step 9: Make the Scripts Executable
+### Step 9: Make the Scripts Executable
 ```bash
 # For Linux/macOS
 chmod +x ~/ros_ws/src/ros_intro_demo/scripts/sensor_publisher.py
@@ -243,7 +241,7 @@ chmod +x ~/ros_ws/src/ros_intro_demo/scripts/sensor_processor.py
 # For Windows (PowerShell)
 # Windows doesn't typically need to change file permissions
 ```
-## Step 10: Build the Workspace Again
+### Step 10: Build the Workspace Again
 ```bash
 # For Linux/macOS
 docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c "catkin_make"
@@ -252,8 +250,8 @@ docker run --rm -v ~/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c
 docker run --rm -v ${HOME}/ros_ws:/ros_ws -w /ros_ws ros:noetic-ros-base-focal bash -c "catkin_make"
 ```
 
-## Step 11: Run the ROS Master
-## Start a Docker container with the ROS master:
+### Step 11: Run the ROS Master
+Start a Docker container with the ROS master:
 ```bash
 # For Linux/macOS
 docker run -it --rm --name ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roscore"
@@ -262,9 +260,9 @@ docker run -it --rm --name ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-fo
 docker run -it --rm --name ros_master -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roscore"
 ```
 
-## Leave this terminal open.
-## Step 12: Run the Publisher Node
-## Open a new terminal and run:
+Leave this terminal open.
+### Step 12: Run the Publisher Node
+Open a new terminal and run:
 ```bash
 # For Linux/macOS
 docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_publisher.py"
@@ -273,8 +271,8 @@ docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noeti
 docker run -it --rm --network container:ros_master -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_publisher.py"
 ```
 
-## Step 13: Run the Processor Node
-## Open a third terminal and run:
+### Step 13: Run the Processor Node
+Open a third terminal and run:
 ```bash
 # For Linux/macOS
 docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_processor.py"
@@ -283,8 +281,8 @@ docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noeti
 docker run -it --rm --network container:ros_master -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun ros_intro_demo sensor_processor.py"
 ```
 
-## Step 14: Using the Launch File Instead
-## Instead of steps 12 and 13, you can use the launch file to start both nodes at once. Open a new terminal and run:
+### Step 14: Using the Launch File Instead
+Instead of steps 12 and 13, you can use the launch file to start both nodes at once. Open a new terminal and run:
 ```bash
 # For Linux/macOS
 docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roslaunch ros_intro_demo sensors.launch"
@@ -293,17 +291,17 @@ docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noeti
 docker run -it --rm --network container:ros_master -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roslaunch ros_intro_demo sensors.launch"
 ```
 
-## Step 15: Exploring ROS Tools
-## With your nodes running, you can explore different ROS tools in separate terminals:
-## List Active Nodes
+### Step 15: Exploring ROS Tools
+With your nodes running, you can explore different ROS tools in separate terminals:
+#### List Active Nodes
 ```bash
 docker run --rm --network container:ros_master ros:noetic-ros-base-focal rosnode list
 ```
-## See Messages on a Topic
+1. See Messages on a Topic
 ```bash
 docker run --rm --network container:ros_master ros:noetic-ros-base-focal rostopic echo /temperature
 ```
-## Record Data with rosbag
+2. Record Data with rosbag
 ```bash
 # For Linux/macOS
 docker run --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_ws && rosbag record -O sensors.bag /temperature /distance /robot_status"
@@ -311,7 +309,7 @@ docker run --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ro
 # For Windows (PowerShell)
 docker run --rm --network container:ros_master -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_ws && rosbag record -O sensors.bag /temperature /distance /robot_status"
 ```
-## Inspect the Bag File
+3. Inspect the Bag File
 ```bash
 # For Linux/macOS
 docker run --rm -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd /ros_ws && rosbag info sensors.bag"
@@ -321,19 +319,19 @@ docker run --rm -v ${HOME}/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "cd 
 ```
 
 ### Quick Start
-## Start ROS Master:
+1. Start ROS Master:
 ```bash
 docker run -it --rm --name ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roscore"
 ```
-## Run a ROS Node:
+2. Run a ROS Node:
 ```bash
 docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && rosrun PACKAGE_NAME NODE_NAME"
 ```
-## Launch Multiple Nodes:
+3. Launch Multiple Nodes:
 ```bash
 docker run -it --rm --network container:ros_master -v ~/ros_ws:/ros_ws ros:noetic-ros-base-focal bash -c "source /ros_ws/devel/setup.bash && roslaunch PACKAGE_NAME LAUNCH_FILE"
 ```
-## Use ROS Tools:
+4. Use ROS Tools:
 ```bash
 docker run --rm --network container:ros_master ros:noetic-ros-base-focal ROS_COMMAND
 ```
